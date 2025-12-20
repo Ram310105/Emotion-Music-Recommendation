@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Mood Music Recommender</title>
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Premium Display Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+  <!-- jQuery -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+  <style>
+    body {
+      background: linear-gradient(135deg, #141E30, #243B55);
+      min-height: 100vh;
+      font-family: 'Poppins', sans-serif;
+      color: #ffffff;
+    }
+
+    /* ---------- TITLE ---------- */
+    .title {
+      font-family: 'Playfair Display', serif;
+      font-size: 72px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-align: center;
+      margin-bottom: 40px;
+      color: #f5f5f5;
+      animation: titleFade 1.2s ease-out;
+    }
+
+    @keyframes titleFade {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ---------- GLASS CARDS ---------- */
+    .glass {
+      background: rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(14px);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.35);
+      transition: transform 0.3s ease;
+    }
+
+    .glass:hover {
+      transform: translateY(-5px);
+    }
+
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 34px;
+      text-align: center;
+      margin-bottom: 15px;
+      color: #00ffd5;
+    }
+
+    #bg {
+      width: 100%;
+      border-radius: 14px;
+      border: 2px solid rgba(255,255,255,0.3);
+    }
+
+    /* ---------- EMOTION BOX ---------- */
+    .emotion-box {
+      background: rgba(0,255,213,0.15);
+      border: 1px solid rgba(0,255,213,0.5);
+      padding: 12px;
+      border-radius: 10px;
+      font-weight: 600;
+      text-align: center;
+      margin-top: 12px;
+    }
+
+    /* ---------- EMOJI ---------- */
+    .emoji {
+      font-size: 64px;
+      margin-top: 10px;
+      text-align: center;
+      animation: floatEmoji 2s ease-in-out infinite;
+    }
+
+    @keyframes floatEmoji {
+      0% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+      100% { transform: translateY(0); }
+    }
+
+    .happy { animation: bounce 1.4s infinite; }
+    .sad { animation: drop 2s infinite; }
+    .angry { animation: shake 0.6s infinite; }
+    .neutral { animation: floatEmoji 2s infinite; }
+    .surprised { animation: pop 1.2s infinite; }
+
+    @keyframes bounce {
+      0%,100% { transform: translateY(0); }
+      50% { transform: translateY(-16px); }
+    }
+
+    @keyframes drop {
+      0% { transform: translateY(-6px); opacity: 0.7; }
+      100% { transform: translateY(6px); opacity: 1; }
+    }
+
+    @keyframes shake {
+      0% { transform: translateX(0); }
+      25% { transform: translateX(-6px); }
+      50% { transform: translateX(6px); }
+      75% { transform: translateX(-6px); }
+      100% { transform: translateX(0); }
+    }
+
+    @keyframes pop {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.3); }
+      100% { transform: scale(1); }
+    }
+
+    /* ---------- YOUTUBE BUTTON ---------- */
+    .youtube-link {
+      display: inline-block;
+      margin-top: 12px;
+      padding: 8px 22px;
+      background: #00ffd5;
+      color: #000;
+      border-radius: 30px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    .youtube-link:hover {
+      background: #00c9a7;
+      transform: scale(1.05);
+    }
+
+    table {
+      color: white;
+    }
+
+    thead {
+      background: rgba(0,255,213,0.3);
+    }
+  </style>
+</head>
+
+<body>
+<div class="container py-4">
+
+  <!-- TITLE -->
+  <div class="title">Mood Music Recommender</div>
+
+  <div class="row g-4">
+
+    <!-- EMOTION SECTION -->
+    <div class="col-md-6">
+      <div class="glass">
+        <div class="section-title">Emotion Detector</div>
+
+        <img id="bg" src="{{ url_for('video_feed') }}">
+
+        <div id="emotionResult" class="emotion-box"></div>
+        <div id="emotionEmoji" class="emoji">🙂</div>
+        <div id="songInfo" class="text-center mt-2"></div>
+
+        <div class="text-center">
+          <a id="youtubeLink" class="youtube-link d-none" target="_blank">▶ Play on YouTube</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- TABLE SECTION -->
+    <div class="col-md-6">
+      <div class="glass">
+        <div class="section-title">Recommended Songs</div>
+        <div id="ResultArea" class="table-responsive"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  const emotionMap = {
+    Happy: { emoji: "😄", cls: "happy" },
+    Sad: { emoji: "😢", cls: "sad" },
+    Angry: { emoji: "😠", cls: "angry" },
+    Neutral: { emoji: "😐", cls: "neutral" },
+    Surprised: { emoji: "😲", cls: "surprised" },
+    Fearful: { emoji: "😨", cls: "sad" },
+    Disgusted: { emoji: "🤢", cls: "angry" }
+  };
+
+  setInterval(function () {
+
+    $.getJSON('/detect_emotion', function (data) {
+      if (!data.error) {
+        $('#emotionResult').text(
+          `Emotion: ${data.emotion} (${(data.confidence * 100).toFixed(1)}%)`
+        );
+
+        $('#songInfo').html(`🎵 ${data.song} — <b>${data.artist}</b>`);
+        $('#youtubeLink').attr('href', data.youtube_link).removeClass('d-none');
+
+        const emo = emotionMap[data.emotion] || emotionMap.Neutral;
+
+        $('#emotionEmoji')
+          .text(emo.emoji)
+          .removeClass()
+          .addClass(`emoji ${emo.cls}`);
+      }
+    });
+
+    $.getJSON('/table_data', function (data) {
+      let html = `
+        <table class="table table-hover table-borderless">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Album</th>
+              <th>Artist</th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
+      data.forEach(row => {
+        html += `
+          <tr>
+            <td>${row.Name || ''}</td>
+            <td>${row.Album || ''}</td>
+            <td>${row.Artist || ''}</td>
+          </tr>
+        `;
+      });
+      html += '</tbody></table>';
+      $('#ResultArea').html(html);
+    });
+
+  }, 1500);
+</script>
+
+</body>
+</html>
