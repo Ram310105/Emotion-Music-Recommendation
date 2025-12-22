@@ -2,7 +2,7 @@ flask
 numpy==1.26.4
 opencv-python-headless
 tensorflow==2.13.0
-keras==2.13.1
+keras==3.13.0
 pillow
 pandas
 spotipy
