@@ -1,75 +1,42 @@
 🎵 Emotion-Based Music Recommendation System
+📌 Description
 
-A real-time Emotion-Based Music Recommendation System that detects human facial emotions using a live webcam feed and recommends songs dynamically based on the detected mood.
+This project is a Python-based web application that detects a user’s facial emotion in real time using a webcam and recommends music based on the detected emotion. The system combines computer vision, deep learning, and Spotify integration to deliver personalized music recommendations.
 
-📌 Project Overview
+It is designed as an end-to-end AI application covering data collection, model training, real-time inference, and user interaction.
 
-This project uses Computer Vision and Deep Learning to recognize facial emotions in real time and recommend suitable music playlists. The system captures video from a webcam, predicts emotions using a CNN model, and displays emotion-based song recommendations through a modern web interface.
+⚙️ How It Works
 
-🚀 Features
+The webcam captures live video frames of the user.
 
-🎥 Real-time facial emotion detection using webcam
+Faces are detected using a Haar Cascade classifier.
 
-🧠 CNN-based emotion classification
+A trained CNN model predicts the user’s emotion from facial expressions.
 
-🎶 Dynamic music recommendations based on emotion
+Based on the detected emotion, relevant music tracks are fetched using the Spotify API.
 
-🌐 Flask-based web application
+The recommended songs are displayed through a web interface.
 
-🎨 Modern UI with animated emojis and glassmorphism design
+▶️ How to Run
 
-📊 Live song recommendation table
+Clone the repository:
 
-🔗 Direct YouTube music links
+git clone https://github.com/Ram310105/Emotion-Music-Recommendation.git
+cd Emotion-Music-Recommendation
 
-🧠 Emotions Detected
 
-Happy 😄
+Install dependencies:
 
-Sad 😢
+pip install -r requirements.txt
 
-Angry 😠
 
-Neutral 😐
+Run the application:
 
-Surprised 😲
+python app.py
 
-Fearful 😨
 
-Disgusted 🤢
+Allow webcam access and view emotion-based music recommendations in the browser.
 
-🛠️ Tech Stack
+🧰 Tech Stack
 
-Frontend
-
-HTML5
-
-CSS3
-
-Bootstrap 5
-
-JavaScript
-
-jQuery
-
-Backend
-
-Python
-
-Flask
-
-Machine Learning & CV
-
-TensorFlow / Keras
-
-OpenCV
-
-NumPy
-
-CNN (Convolutional Neural Network)
-
-Data
-
-Emotion-wise music datasets (CSV)
-
-Spotify API (optional for fetching playlists)
+Python, OpenCV, TensorFlow/Keras, CNN, Spotify API, Flask, NumPy, Pandas, HTML, CSS
